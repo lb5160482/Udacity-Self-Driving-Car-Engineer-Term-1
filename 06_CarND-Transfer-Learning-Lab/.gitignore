@@ -1,0 +1,11 @@
+data
+models
+.ipynb_checkpoints
+bottlenecks
+inception-100.zip
+resnet-100.zip
+vgg-100.zip
+/lenet_cifar10_model/
+/inception-100/
+/resnet-100/
+/vgg-100/
