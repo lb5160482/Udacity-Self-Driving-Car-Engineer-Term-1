@@ -9,3 +9,9 @@ vgg-100.zip
 /inception-100/
 /resnet-100/
 /vgg-100/
+inception-cifar10-bottleneck-data.zip
+inception-traffic-bottleneck-data.zip
+resnet-cifar10-bottleneck-data.zip
+resnet-traffic-bottleneck-data.zip
+vgg-cifar10-bottleneck-data.zip
+vgg-traffic-bottleneck-data.zip
