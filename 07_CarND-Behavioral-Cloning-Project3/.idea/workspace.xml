@@ -18,7 +18,7 @@
         <entry file="file://$PROJECT_DIR$/video.py">
           <provider selected="true" editor-type-id="text-editor">
             <state relative-caret-position="60">
-              <caret line="4" column="29" lean-forward="true" selection-start-line="4" selection-start-column="29" selection-end-line="4" selection-end-column="29" />
+              <caret line="4" column="29" selection-start-line="4" selection-start-column="29" selection-end-line="4" selection-end-column="29" />
               <folding>
                 <element signature="e#0#44#0" expanded="true" />
               </folding>
@@ -50,20 +50,11 @@
       <file leaf-file-name="generating_writeup_images.py" pinned="false" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/generating_writeup_images.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="90">
-              <caret line="6" column="10" selection-start-line="6" selection-start-column="9" selection-end-line="6" selection-end-column="10" />
+            <state relative-caret-position="-227">
+              <caret line="30" column="16" selection-start-line="30" selection-start-column="16" selection-end-line="30" selection-end-column="16" />
               <folding>
                 <element signature="e#0#10#0" expanded="true" />
               </folding>
-            </state>
-          </provider>
-        </entry>
-      </file>
-      <file leaf-file-name="convolutional.py" pinned="false" current-in-tab="false">
-        <entry file="file://$USER_HOME$/anaconda/envs/udacity_nn/lib/python3.5/site-packages/keras/layers/convolutional.py">
-          <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="514">
-              <caret line="368" column="15" selection-start-line="368" selection-start-column="15" selection-end-line="368" selection-end-column="15" />
             </state>
           </provider>
         </entry>
@@ -82,6 +73,7 @@
       <find>video</find>
       <find>image_folder</find>
       <find>imread</find>
+      <find>mag_binary</find>
     </findStrings>
   </component>
   <component name="Git.Settings">
@@ -99,8 +91,8 @@
   </component>
   <component name="ProjectFrameBounds">
     <option name="y" value="23" />
-    <option name="width" value="1920" />
-    <option name="height" value="955" />
+    <option name="width" value="1680" />
+    <option name="height" value="950" />
   </component>
   <component name="ProjectInspectionProfilesVisibleTreeState">
     <entry key="Project Default">
@@ -157,7 +149,7 @@
       </list>
     </option>
   </component>
-  <component name="RunManager" selected="Python.drive">
+  <component name="RunManager" selected="Python.generating_writeup_images">
     <configuration name="drive" type="PythonConfigurationType" factoryName="Python" temporary="true">
       <module name="07_CarND-Behavioral-Cloning-Project3" />
       <option name="INTERPRETER_OPTIONS" value="" />
@@ -238,9 +230,9 @@
     </list>
     <recent_temporary>
       <list>
-        <item itemvalue="Python.video" />
-        <item itemvalue="Python.drive" />
         <item itemvalue="Python.generating_writeup_images" />
+        <item itemvalue="Python.drive" />
+        <item itemvalue="Python.video" />
         <item itemvalue="Python.train" />
       </list>
     </recent_temporary>
@@ -259,12 +251,13 @@
     <servers />
   </component>
   <component name="ToolWindowManager">
-    <frame x="0" y="23" width="1920" height="955" extended-state="0" />
+    <frame x="0" y="23" width="1680" height="950" extended-state="0" />
+    <editor active="true" />
     <layout>
-      <window_info active="true" content_ui="combo" id="Project" order="0" sideWeight="0.49915397" visible="true" weight="0.25" />
+      <window_info content_ui="combo" id="Project" order="0" sideWeight="0.49915397" visible="true" weight="0.2857143" />
       <window_info anchor="bottom" id="TODO" order="6" />
       <window_info anchor="bottom" id="Event Log" order="7" sideWeight="0.50208336" side_tool="true" weight="0.3295583" />
-      <window_info anchor="bottom" id="Run" order="2" sideWeight="0.49791667" visible="true" weight="0.3291714" />
+      <window_info active="true" anchor="bottom" id="Run" order="2" sideWeight="0.49791667" visible="true" weight="0.33105022" />
       <window_info anchor="bottom" id="Version Control" order="7" />
       <window_info anchor="bottom" id="Python Console" order="7" />
       <window_info id="Structure" order="1" side_tool="true" weight="0.25" />
@@ -513,17 +506,24 @@
     <entry file="file://$PROJECT_DIR$/video.py">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="60">
-          <caret line="4" column="29" lean-forward="true" selection-start-line="4" selection-start-column="29" selection-end-line="4" selection-end-column="29" />
+          <caret line="4" column="29" selection-start-line="4" selection-start-column="29" selection-end-line="4" selection-end-column="29" />
           <folding>
             <element signature="e#0#44#0" expanded="true" />
           </folding>
         </state>
       </provider>
     </entry>
+    <entry file="file://$USER_HOME$/anaconda/envs/udacity/lib/python3.5/site-packages/numpy/lib/twodim_base.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="187">
+          <caret line="84" column="4" selection-start-line="84" selection-start-column="4" selection-end-line="84" selection-end-column="4" />
+        </state>
+      </provider>
+    </entry>
     <entry file="file://$PROJECT_DIR$/generating_writeup_images.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="90">
-          <caret line="6" column="10" selection-start-line="6" selection-start-column="9" selection-end-line="6" selection-end-column="10" />
+        <state relative-caret-position="-227">
+          <caret line="30" column="16" selection-start-line="30" selection-start-column="16" selection-end-line="30" selection-end-column="16" />
           <folding>
             <element signature="e#0#10#0" expanded="true" />
           </folding>
