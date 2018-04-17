@@ -1,14 +1,16 @@
 import cv2
-import glob
+import numpy as np
 from camera_calibration import CameraCalibration
 import image_processing as imgproc
-import numpy as np
 
-image_size = (1280, 720)
-bin_img_dict = {}
+scaled_size = 1
+image_size = (int(1280 * scaled_size), int(720 * scaled_size))
+offset = image_size[1] * 0.3
+perspective_src_points = scaled_size * np.float32([[233, 694], [595, 450], [686, 450], [1073, 694]])  # These points are manually selected
+perspective_dst_points = np.float32([[offset, image_size[1]], [offset, 0],
+									 [image_size[0] - offset, 0], [image_size[0] - offset, image_size[1]]])
 
-
-# Part 1 -- Camera calibration
+# calibration
 calibration = CameraCalibration('camera_cal/')
 calibration.calibrate()
 intrinsic_mat = calibration.get_intrinsic()
@@ -19,77 +21,35 @@ print('Camera distortion parameters are :')
 print(dist_paras)
 print()
 
+cap = cv2.VideoCapture('./project_video.mp4')
 
-# Part 2 -- Apply a distortion correction to raw images.
-calibration.undistort_images()
-print()
+while cap.isOpened():
+	ret, frame = cap.read()
+	# distortion correction
+	undist = calibration.distort_correction(frame)
 
+	undist = cv2.resize(undist, (0, 0), fx=scaled_size, fy=scaled_size)
 
-# Part 3 -- Use color transforms, gradients, etc., to create a thresholded binary image
-test_image_paths = glob.glob('./test_images/*.jpg')
-print('Start generating binary images from sample images...')
-for test_img_path in test_image_paths:
-    test_img = cv2.imread(test_img_path)
-    # distortion correction
-    test_img = calibration.distort_correction(test_img)
-    # test_img = cv2.GaussianBlur(test_img, (5, 5), 0)
-    kernel = np.ones((3, 3), np.uint8)
-    test_img = cv2.erode(test_img, kernel, iterations=1)
-    test_img = cv2.dilate(test_img, kernel, iterations=1)
+	# binary images from different processing methods
+	sobel_x_bin = imgproc.abs_sobel_thresh(undist, sobel_kernel=5, orient='x', thresh_min=20, thresh_max=100)
+	s_channel_bin = imgproc.hsv_s_threshold(undist, thresh=(80, 255))
+	v_channel_bin = imgproc.hsv_v_threshold(undist, thresh=(80, 255))
 
-    # binary images from different processing methods
-    sobel_x_bin = imgproc.abs_sobel_thresh(test_img, orient='x', thresh_min=20, thresh_max=100)
-    sobel_y_bin = imgproc.abs_sobel_thresh(test_img, orient='y', thresh_min=20, thresh_max=100)
-    mag_bin = imgproc.mag_thresh(test_img, sobel_kernel=5, thresh=(30, 100))
-    dir_bin = imgproc.dir_threshold(test_img, sobel_kernel=5, thresh=(0.7, 1.3))
-    s_channel_bin = imgproc.hls_s_threshol(test_img, thresh=(150, 255))
+	# combination of binary images
+	thresholded = np.zeros_like(undist[:, :, 0])
+	thresholded[(v_channel_bin == 255) & ((sobel_x_bin == 255) | (s_channel_bin == 255))] = 255
 
-    # combination of binary images
-    combine = np.zeros_like(test_img[:, :, 0])
-    combine[((sobel_x_bin == 255) & (sobel_y_bin == 255)) | ((mag_bin == 255) & (dir_bin == 255)) | (
-            s_channel_bin == 255)] = 255
+	bird_view_img_binary = imgproc.perspective_transfrom(thresholded, perspective_src_points, perspective_dst_points)
 
-    window_name = test_img_path[test_img_path.rfind('/') + 1:]
-    # cv2.imshow(window_name, combine)
-    # cv2.waitKey(0)
-    # cv2.destroyWindow(window_name)
-
-    # file_name = './output_images/bin_' + window_name;
-    # cv2.imwrite(file_name, combine)
-
-    bin_img_dict[window_name] = combine
-print('Finish generating binary images from sample images!')
-print()
+	# visualization
+	small_rgb = cv2.resize(undist, (0, 0), fx=0.3, fy=0.3)
+	small_thresholded = cv2.resize(thresholded, (0, 0), fx=0.3, fy=0.3)
+	small_bird = cv2.resize(bird_view_img_binary, (0, 0), fx=0.3, fy=0.3)
+	concatinate_row1 = np.concatenate((small_rgb, cv2.cvtColor(small_thresholded, cv2.COLOR_GRAY2BGR)), axis=1)
+	concatinate_row2 = np.concatenate((cv2.cvtColor(small_bird, cv2.COLOR_GRAY2BGR), np.zeros_like(small_rgb)), axis=1)
+	concatinate = np.concatenate((concatinate_row1, concatinate_row2), axis=0)
+	cv2.imshow('frame', concatinate)
 
 
-# Part 4 -- Apply a perspective transform to rectify binary image ("birds-eye view")
-print('Start perspective transformation...')
-offset = 200
-perspective_src_points = np.float32([[233, 694], [595, 450], [686, 450], [1073, 694]])  # These points are manually selected
-perspective_dst_points = np.float32([[offset, image_size[1]], [offset, 0],
-                                     [image_size[0] - offset, 0], [image_size[0] - offset, image_size[1]]])
-for test_img_path in test_image_paths:
-    img_name = test_img_path[test_img_path.rfind('/') + 1:]
-    test_img = cv2.imread(test_img_path)
-    # distortion correction
-    test_img = calibration.distort_correction(test_img)
-
-    # file_name = './output_images/undist_' + img_name;
-    # cv2.imwrite(file_name, test_img)
-
-    cv2.line(test_img, (233, 694), (595, 450), color=(0, 0, 255))
-    cv2.line(test_img, (686, 450), (1073, 694), color=(0, 0, 255))
-    # file_name = './output_images/perepective_region.jpg'
-    # cv2.imwrite(file_name, test_img)
-    bird_view_img_rgb = imgproc.perspective_transfrom(test_img, perspective_src_points, perspective_dst_points)
-    bird_view_img_binary = imgproc.perspective_transfrom(bin_img_dict[img_name], perspective_src_points, perspective_dst_points)
-
-    # cv2.imshow(img_name, bird_view_img_rgb)
-    # cv2.imshow(img_name, bird_view_img_binary)
-    # cv2.waitKey(0)
-    # cv2.destroyWindow(window_name)
-
-    cv2.imwrite('./output_images/bird_view_rgb_' + img_name, bird_view_img_rgb)
-    cv2.imwrite('./output_images/bird_view_binary_' + img_name, bird_view_img_binary)
-
-print('Perpective transformation finished!')
+	if cv2.waitKey(1) & 0xFF == ord('q'):
+		break

@@ -3,7 +3,6 @@
     <words>
       <w>imshow</w>
       <w>imwrite</w>
-      <w>sobel</w>
     </words>
   </dictionary>
 </component>

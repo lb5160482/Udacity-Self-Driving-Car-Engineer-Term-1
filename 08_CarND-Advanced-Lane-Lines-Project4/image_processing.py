@@ -2,12 +2,12 @@ import cv2
 import numpy as np
 
 
-def abs_sobel_thresh(img, orient='x', thresh_min=0, thresh_max=255):
+def abs_sobel_thresh(img, sobel_kernel=3, orient='x', thresh_min=0, thresh_max=255):
     gray = cv2.cvtColor(img, cv2.COLOR_BGR2GRAY)
     if (orient == 'x'):
-        sobel = cv2.Sobel(gray, cv2.CV_64F, 1, 0)
+        sobel = cv2.Sobel(gray, cv2.CV_64F, 1, 0, ksize=sobel_kernel)
     else:
-        sobel = cv2.Sobel(gray, cv2.CV_64F, 0, 1)
+        sobel = cv2.Sobel(gray, cv2.CV_64F, 0, 1, ksize=sobel_kernel)
     sobel_absolute = np.absolute(sobel)
     scaled = np.uint8(255 * sobel_absolute / np.max(sobel_absolute))
     binary = np.zeros_like(scaled)
@@ -39,8 +39,26 @@ def dir_threshold(img, sobel_kernel=3, thresh=(0, np.pi / 2)):
     return threshed_direction
 
 
-def hls_s_threshol(img, thresh=(0, 255)):
+def hls_s_threshold(img, thresh=(0, 255)):
     hls = cv2.cvtColor(img, cv2.COLOR_BGR2HLS)
+    s_channel = hls[:, :, 2]
+    binary = np.zeros_like(s_channel)
+    binary[(s_channel > thresh[0]) & (s_channel <= thresh[1])] = 255
+
+    return binary
+
+
+def hsv_s_threshold(img, thresh=(0, 255)):
+    hls = cv2.cvtColor(img, cv2.COLOR_BGR2HSV)
+    s_channel = hls[:, :, 1]
+    binary = np.zeros_like(s_channel)
+    binary[(s_channel > thresh[0]) & (s_channel <= thresh[1])] = 255
+
+    return binary
+
+
+def hsv_v_threshold(img, thresh=(0, 255)):
+    hls = cv2.cvtColor(img, cv2.COLOR_BGR2HSV)
     s_channel = hls[:, :, 2]
     binary = np.zeros_like(s_channel)
     binary[(s_channel > thresh[0]) & (s_channel <= thresh[1])] = 255
