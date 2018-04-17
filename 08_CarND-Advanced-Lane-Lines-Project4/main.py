@@ -42,7 +42,7 @@ for test_img_path in test_image_paths:
     sobel_y_bin = imgproc.abs_sobel_thresh(test_img, orient='y', thresh_min=20, thresh_max=100)
     mag_bin = imgproc.mag_thresh(test_img, sobel_kernel=5, thresh=(30, 100))
     dir_bin = imgproc.dir_threshold(test_img, sobel_kernel=5, thresh=(0.7, 1.3))
-    s_channel_bin = imgproc.hls_s_threshol(test_img, thresh=(160, 255))
+    s_channel_bin = imgproc.hls_s_threshol(test_img, thresh=(150, 255))
 
     # combination of binary images
     combine = np.zeros_like(test_img[:, :, 0])
