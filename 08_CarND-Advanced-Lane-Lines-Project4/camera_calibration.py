@@ -10,6 +10,7 @@ class CameraCalibration():
 		self.dist_paras = None
 		self.image_paths = glob.glob(images_path + '*.jpg')
 
+
 	def calibrate(self):
 		objp = np.zeros((6 * 9, 3), np.float32)
 		objp[:, :2] = np.mgrid[0:9, 0:6].T.reshape(-1, 2)
@@ -41,18 +42,20 @@ class CameraCalibration():
 		ret, self.intrinsic_mat, self.dist_paras, rvecs, tves = cv2.calibrateCamera(object_points, img_points, img_size,
 																					None, None)
 
-		dst = cv2.undistort(test_img, self.intrinsic_mat, self.dist_paras, None, self.intrinsic_mat)
-		raw_small = cv2.resize(test_img, (0, 0), fx=0.25, fy=0.25)
-		cv2.putText(raw_small, 'Raw', (raw_small.shape[1] // 2 - 50, raw_small.shape[0] // 2),
-					fontFace=cv2.FONT_HERSHEY_SIMPLEX, fontScale=2, color=(0, 0, 255))
-		dst_small = cv2.resize(dst, (0, 0), fx=0.25, fy=0.25)
-		cv2.putText(dst_small, 'Undistorted', (dst_small.shape[1] // 2 - 120, dst_small.shape[0] // 2),
-					fontFace=cv2.FONT_HERSHEY_SIMPLEX, fontScale=1.3, color=(0, 0, 255))
-		distortion_comparison = np.hstack([raw_small, dst_small])
-		cv2.imshow('distortion comparison', distortion_comparison)
+		# Generate undistorted images
+		# dst = cv2.undistort(test_img, self.intrinsic_mat, self.dist_paras, None, self.intrinsic_mat)
+		# raw_small = cv2.resize(test_img, (0, 0), fx=0.25, fy=0.25)
+		# cv2.putText(raw_small, 'Raw', (raw_small.shape[1] // 2 - 50, raw_small.shape[0] // 2),
+		# 			fontFace=cv2.FONT_HERSHEY_SIMPLEX, fontScale=2, color=(0, 0, 255))
+		# dst_small = cv2.resize(dst, (0, 0), fx=0.25, fy=0.25)
+		# cv2.putText(dst_small, 'Undistorted', (dst_small.shape[1] // 2 - 120, dst_small.shape[0] // 2),
+		# 			fontFace=cv2.FONT_HERSHEY_SIMPLEX, fontScale=1.3, color=(0, 0, 255))
+		# distortion_comparison = np.hstack([raw_small, dst_small])
+		# cv2.imshow('distortion comparison', distortion_comparison)
 		# cv2.imwrite('./output_images/distortion_comparison.jpg', distortion_comparison)
+
 		print('Camera calibration finished! Press any key to continue.')
-		cv2.waitKey(0)
+
 
 	def undistort_images(self):
 		print('Images distortion on sample imges started...')
@@ -66,8 +69,10 @@ class CameraCalibration():
 			# 	cv2.imwrite('./output_images/undist_' + img_path[img_path.rfind('/') + 1:], undist)
 		print('Images distortion correction on sample imagesfinished!')
 
+
 	def get_intrinsic(self):
 		return self.intrinsic_mat
+
 
 	def get_distortion_paras(self):
 		return self.dist_paras
