@@ -49,8 +49,8 @@ combine[(v_bin == 255) & ((sobel_x_bin == 255) | (s_channel_bin == 255))] = 255
 
 bird_view_img_binary = imgproc.perspective_transfrom(combine, perspective_src_points, perspective_dst_points)
 
-left_line = Line()
-left_line.find_line(bird_view_img_binary, 'left')
+left_line = Line(image_size)
+left_line.find_line(bird_view_img_binary)
 
 # cv2.imshow('bird_view_img_binary', bird_view_img_binary)
 # cv2.waitKey(0)

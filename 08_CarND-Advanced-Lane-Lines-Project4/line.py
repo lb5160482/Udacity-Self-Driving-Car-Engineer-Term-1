@@ -2,77 +2,165 @@ import numpy as np
 import cv2
 
 class Line():
-    def __init__(self):
-        self.detected = False
-        self.recent_xfit = []
-        self.best_x = None
-        self.best_fit = None
-        self.current_fit = None
-        self.radius_of_curvature = None
-        self.line_base_pos = None
-        self.diffs = None
-        self.allx = None
-        self.ally = None
+	"""
+	img_size: width, height
+	"""
+	def __init__(self, img_size):
+		self.detected = False
+		self.recent_xfit = []
+		self.best_x = None
+		self.best_fit = None
+		self.current_fit = []
+		self.radius_of_curvature = []
+		self.line_base_pos = None
+		self.diffs = None
+		self.img_size = img_size
+		# standard y coordinates
+		self.ploty = np.linspace(0, img_size[1] - 1, img_size[1], dtype=np.int32)
+		# most recent valid curvatures
+		self.cur_curvature = []
+		# detected left&right x, y
+		self.left_x = None
+		self.left_y = None
+		self.right_x = None
+		self.right_y = None
+		# scale pixel->meter
+		self.ym_per_pix = 30 / 720
+		self.xm_per_pix = 3.7 / 700
+		# car position offset
+		self.car_pos = 0
 
-    def find_line(self, input_binary_warped, side):
-        if not self.detected:
-            self.blind_search(input_binary_warped, side)
-        else:
-            raise NotImplementedError()
+	def find_line(self, binary_warped):
+		# find lanes
+		if not self.detected:
+			self.blind_search(binary_warped)
+		else:
+			self.track_lines(binary_warped)
+
+		# sanity check
+		if self.sanity_check():
+			# self.detected = True
+			self.best_fit = self.current_fit
+		# else:
+			# self.detected = False
+
+		# update cars position
+		self.update_car_position()
 
 
-    # Note: binary_warped will be only half on the image
-    def blind_search(self, input_binary_warped, side):
-        if side is 'left':
-            binary_warped = input_binary_warped[:, 0:input_binary_warped.shape[1] // 2]
-        elif side is 'right':
-            binary_warped = input_binary_warped[:, input_binary_warped.shape[1] // 2:]
+	# Note: binary_warped will be only half on the image
+	def blind_search(self, binary_warped):
+		#### visualization ####
+		out_img = np.dstack((binary_warped, binary_warped, binary_warped))
+		#### visualization ####
 
-        #### visualization ####
-        out_img = np.dstack((binary_warped, binary_warped, binary_warped))
-        #### visualization ####
+		histogram = np.sum(binary_warped[binary_warped.shape[0] // 2:, :], axis=0)
+		midpoint = np.int(histogram.shape[0] // 2)
+		left_base_x = np.argmax(histogram[:midpoint])
+		right_base_x = np.argmax(histogram[midpoint:]) + midpoint
 
-        histogram = np.sum(binary_warped[binary_warped.shape[0] // 2:, :], axis=0)
-        x_base = np.argmax(histogram)
+		nwindow = 9
+		window_height = np.int(binary_warped.shape[0] // nwindow)
 
-        nwindow = 9
-        window_height = np.int(binary_warped.shape[0] // nwindow)
-
-        nonezero = binary_warped.nonzero()
-        nonezero_y = np.array(nonezero[0])
-        nonezero_x = np.array(nonezero[1])
+		nonezero = binary_warped.nonzero()
+		nonezero_y = np.array(nonezero[0])
+		nonezero_x = np.array(nonezero[1])
 
 
-        x_current = x_base
-        margin = 100
-        # Set minimum number of pixels found to recenter window
-        minpix = 50
-        lane_inds = []
+		left_x_current = left_base_x
+		right_x_current = right_base_x
 
-        for window_ind in range(nwindow):
-            win_y_low = binary_warped.shape[0] - (window_ind + 1) * window_height
-            win_y_high = binary_warped.shape[0] - window_ind * window_height
-            win_x_low = x_current - margin
-            win_x_high = x_current + margin
+		margin = 100
+		# Set minimum number of pixels found to recenter window
+		minpix = 50
 
-            #### visualization ####
-            cv2.rectangle(out_img, (win_x_low, win_y_low), (win_x_high, win_y_high), (0, 255, 0), 2)
-            #### visualization ####
+		left_lane_inds = []
+		right_lane_inds = []
 
-            good_indx = ((nonezero_y >= win_y_low) & (nonezero_y <= win_y_high) & (nonezero_x >= win_x_low) & (nonezero_x <= win_x_high)).nonzero()[0]
-            lane_inds.append(good_indx)
-            if len(good_indx) >minpix:
-                x_current = np.int(np.mean(nonezero_x[good_indx]))
+		for window_ind in range(nwindow):
+			win_y_low = binary_warped.shape[0] - (window_ind + 1) * window_height
+			win_y_high = binary_warped.shape[0] - window_ind * window_height
+			win_x_left_low = left_x_current - margin
+			win_x_left_high = left_x_current + margin
+			win_x_right_low = right_x_current - margin
+			win_x_right_high = right_x_current + margin
 
-        lane_inds = np.concatenate(lane_inds)
-        x = nonezero_x[lane_inds]
-        y = nonezero_y[lane_inds]
+			#### visualization ####
+			cv2.rectangle(out_img, (win_x_left_low, win_y_low), (win_x_left_high, win_y_high), (0, 255, 0), 2)
+			cv2.rectangle(out_img, (win_x_right_low, win_y_low), (win_x_right_high, win_y_high), (0, 255, 0), 2)
+			#### visualization ####
 
-        fit = np.polyfit(y, x, 2)
+			good_left_inds = ((nonezero_y >= win_y_low) & (nonezero_y <= win_y_high) &
+							  (nonezero_x >= win_x_left_low) & (nonezero_x <= win_x_left_high)).nonzero()[0]
+			good_right_inds = ((nonezero_y >= win_y_low) & (nonezero_y <= win_y_high) &
+							   (nonezero_x >= win_x_right_low) & (nonezero_x <= win_x_right_high)).nonzero()[0]
+			left_lane_inds.append(good_left_inds)
+			right_lane_inds.append(good_right_inds)
 
-        ploty = np.linspace(0, binary_warped.shape[0] - 1, binary_warped.shape[0], dtype=np.int32)
-        fitx = (fit[0] * ploty ** 2 + fit[1] * ploty + fit[2]).astype(np.int32)
-        pts = np.vstack((fitx, ploty)).T.reshape(-1, 1, 2)
-        out_img = cv2.polylines(out_img, [pts], False, (0, 0, 255))
-        cv2.imshow('out', out_img)
-        cv2.waitKey(0)
+			if len(good_left_inds) >minpix:
+				left_x_current = np.int(np.mean(nonezero_x[good_left_inds]))
+			if len(good_right_inds) > minpix:
+				right_x_current = np.int(np.mean(nonezero_x[good_right_inds]))
+
+		left_lane_inds = np.concatenate(left_lane_inds)
+		right_lane_inds = np.concatenate(right_lane_inds)
+		self.left_x = nonezero_x[left_lane_inds]
+		self.left_y = nonezero_y[left_lane_inds]
+		self.right_x = nonezero_x[right_lane_inds]
+		self.right_y = nonezero_y[right_lane_inds]
+
+		left_fit = np.polyfit(self.left_y, self.left_x, 2)
+		right_fit = np.polyfit(self.right_y, self.right_x, 2)
+		# update fitting coefficients
+		self.current_fit = [left_fit, right_fit]
+
+		# fitting
+		left_fitx = (left_fit[0] * self.ploty ** 2 + left_fit[1] * self.ploty + left_fit[2]).astype(np.int32)
+		left_pts = np.vstack((left_fitx, self.ploty)).T.reshape(-1, 1, 2)
+		right_fitx = (right_fit[0] * self.ploty ** 2 + right_fit[1] * self.ploty + right_fit[2]).astype(np.int32)
+		right_pts = np.vstack((right_fitx, self.ploty)).T.reshape(-1, 1, 2)
+
+		out_img = cv2.polylines(out_img, [left_pts], False, (0, 0, 255))
+		out_img = cv2.polylines(out_img, [right_pts], False, (0, 0, 255))
+
+		#### visualization ####
+		cv2.imshow('out', out_img)
+		# cv2.waitKey(0)
+		#### visualization ####
+
+		return left_fit, right_fit
+
+
+	def track_lines(self, binary_warped):
+		raise NotImplementedError()
+
+
+	def sanity_check(self):
+		cur_left_curvature, cur_right_curvature = self.get_curvature()
+		if cur_left_curvature / cur_right_curvature > 10 or cur_left_curvature / cur_right_curvature < 0.1:
+			return False
+		else:
+			self.cur_curvature = (cur_left_curvature, cur_right_curvature)
+			return True
+
+
+	def update_car_position(self):
+		y_eval =  self.img_size[1]
+		mid_point = self.img_size[0] / 2
+		left_bottom_x = self.best_fit[0][0] * y_eval ** 2 + self.best_fit[0][1] * y_eval + self.best_fit[0][2]
+		right_bottom_t = self.best_fit[1][0] * y_eval ** 2 + self.best_fit[1][1] * y_eval + self.best_fit[1][2]
+		self.car_pos = (mid_point - (left_bottom_x + right_bottom_t) / 2) * self.xm_per_pix
+		print(self.car_pos)
+
+
+	def get_curvature(self):
+		y_eval = self.img_size[1]
+		left_fit_cur = np.polyfit(self.left_y * self.ym_per_pix, self.left_x * self.xm_per_pix, 2)
+		right_fit_cur = np.polyfit(self.right_y * self.ym_per_pix, self.right_x * self.xm_per_pix, 2)
+		# compute new curvature in meters
+		left_curvature = ((1 + (2 * left_fit_cur[0] * y_eval * self.ym_per_pix + left_fit_cur[1])**2)**1.5) \
+						 / np.absolute(2 * left_fit_cur[0])
+		right_curvature = ((1 + (2 * right_fit_cur[0] * y_eval * self.ym_per_pix + right_fit_cur[1])**2)**1.5) \
+						 / np.absolute(2 * right_fit_cur[0])
+
+		return left_curvature, right_curvature

@@ -4,6 +4,7 @@ from camera_calibration import CameraCalibration
 import image_processing as imgproc
 import numpy as np
 import platform
+from line import Line
 
 image_size = (1280, 720)
 bin_img_dict = {}

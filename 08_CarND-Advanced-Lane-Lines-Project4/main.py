@@ -2,6 +2,7 @@ import cv2
 import numpy as np
 from camera_calibration import CameraCalibration
 import image_processing as imgproc
+from line import Line
 
 scaled_size = 1
 image_size = (int(1280 * scaled_size), int(720 * scaled_size))
@@ -10,7 +11,7 @@ perspective_src_points = scaled_size * np.float32(
     [[233, 694], [595, 450], [686, 450], [1073, 694]])  # These points are manually selected
 perspective_dst_points = np.float32([[offset, image_size[1]], [offset, 0],
                                      [image_size[0] - offset, 0], [image_size[0] - offset, image_size[1]]])
-
+lines = Line(image_size)
 # calibration
 calibration = CameraCalibration('camera_cal/')
 calibration.calibrate()
@@ -41,6 +42,8 @@ while cap.isOpened():
     thresholded[(v_channel_bin == 255) & ((sobel_x_bin == 255) | (s_channel_bin == 255))] = 255
 
     bird_view_img_binary = imgproc.perspective_transfrom(thresholded, perspective_src_points, perspective_dst_points)
+
+    lines.find_line(bird_view_img_binary)
 
     # visualization
     small_rgb = cv2.resize(undist, (0, 0), fx=0.3, fy=0.3)
