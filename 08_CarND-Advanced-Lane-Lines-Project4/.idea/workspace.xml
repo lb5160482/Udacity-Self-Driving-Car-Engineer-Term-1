@@ -14,10 +14,22 @@
       <file leaf-file-name="main.py" pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/main.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="120">
-              <caret line="8" column="6" selection-start-line="8" selection-end-line="8" selection-end-column="6" />
+            <state relative-caret-position="574">
+              <caret line="54" column="77" selection-start-line="54" selection-start-column="77" selection-end-line="54" selection-end-column="77" />
               <folding>
                 <element signature="e#0#10#0" expanded="true" />
+              </folding>
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file leaf-file-name="line.py" pinned="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/line.py">
+          <provider selected="true" editor-type-id="text-editor">
+            <state relative-caret-position="441">
+              <caret line="137" column="24" selection-start-line="137" selection-start-column="24" selection-end-line="137" selection-end-column="24" />
+              <folding>
+                <element signature="e#0#18#0" expanded="true" />
               </folding>
             </state>
           </provider>
@@ -26,7 +38,7 @@
       <file leaf-file-name="test_result.py" pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/test_result.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="332">
+            <state relative-caret-position="390">
               <caret line="32" column="43" selection-start-line="32" selection-start-column="43" selection-end-line="32" selection-end-column="43" />
             </state>
           </provider>
@@ -35,22 +47,10 @@
       <file leaf-file-name="test_single_image.py" pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/test_single_image.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="383">
+            <state relative-caret-position="780">
               <caret line="52" column="41" selection-start-line="52" selection-start-column="41" selection-end-line="52" selection-end-column="41" />
               <folding>
                 <element signature="e#0#10#0" expanded="true" />
-              </folding>
-            </state>
-          </provider>
-        </entry>
-      </file>
-      <file leaf-file-name="line.py" pinned="false" current-in-tab="true">
-        <entry file="file://$PROJECT_DIR$/line.py">
-          <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="-877">
-              <caret line="123" column="85" selection-start-line="123" selection-start-column="85" selection-end-line="123" selection-end-column="85" />
-              <folding>
-                <element signature="e#0#18#0" expanded="true" />
               </folding>
             </state>
           </provider>
@@ -68,11 +68,11 @@
           </provider>
         </entry>
       </file>
-      <file leaf-file-name="image_processing.py" pinned="false" current-in-tab="false">
+      <file leaf-file-name="image_processing.py" pinned="false" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/image_processing.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="1020">
-              <caret line="68" column="4" selection-start-line="68" selection-start-column="4" selection-end-line="68" selection-end-column="4" />
+            <state relative-caret-position="248">
+              <caret line="112" column="36" selection-start-line="112" selection-start-column="36" selection-end-line="112" selection-end-column="36" />
               <folding>
                 <element signature="e#0#10#0" expanded="true" />
               </folding>
@@ -98,6 +98,17 @@
       <find>current_fit</find>
       <find>track_lines</find>
       <find>indicie</find>
+      <find>diffs</find>
+      <find>out_img</find>
+      <find>cur_curvature</find>
+      <find>best_fit</find>
+      <find>ym_per_pix</find>
+      <find>self.left_x</find>
+      <find>self.best_fit</find>
+      <find>self.radius_of_curvature</find>
+      <find>line_base_pos</find>
+      <find>self.diffs</find>
+      <find>self.current_fit</find>
     </findStrings>
   </component>
   <component name="IdeDocumentHistory">
@@ -106,19 +117,19 @@
         <option value="$PROJECT_DIR$/test.py" />
         <option value="$PROJECT_DIR$/camera_calibration.py" />
         <option value="$PROJECT_DIR$/test_images/test_single_image.py" />
-        <option value="$PROJECT_DIR$/image_processing.py" />
         <option value="$PROJECT_DIR$/test_single_image.py" />
         <option value="$PROJECT_DIR$/test_result.py" />
-        <option value="$PROJECT_DIR$/main.py" />
         <option value="$PROJECT_DIR$/line.py" />
+        <option value="$PROJECT_DIR$/main.py" />
+        <option value="$PROJECT_DIR$/image_processing.py" />
       </list>
     </option>
   </component>
-  <component name="ProjectFrameBounds">
-    <option name="x" value="-9" />
-    <option name="y" value="-9" />
-    <option name="width" value="1938" />
-    <option name="height" value="1048" />
+  <component name="ProjectFrameBounds" extendedState="6">
+    <option name="x" value="-6" />
+    <option name="y" value="23" />
+    <option name="width" value="1932" />
+    <option name="height" value="980" />
   </component>
   <component name="ProjectView">
     <navigator proportions="" version="1">
@@ -341,10 +352,10 @@
     <servers />
   </component>
   <component name="ToolWindowManager">
-    <frame x="-9" y="23" width="1938" height="980" extended-state="0" />
+    <frame x="0" y="23" width="1920" height="980" extended-state="6" />
     <editor active="true" />
     <layout>
-      <window_info content_ui="combo" id="Project" order="0" visible="true" weight="0.249742" />
+      <window_info content_ui="combo" id="Project" order="0" visible="true" weight="0.25208333" />
       <window_info anchor="bottom" id="TODO" order="6" />
       <window_info anchor="bottom" id="Event Log" order="7" side_tool="true" />
       <window_info active="true" anchor="bottom" id="Run" order="2" visible="true" weight="0.3432671" />
@@ -678,10 +689,17 @@
     <entry file="file://D:/ANACONDA/envs/tensorflow2/Lib/site-packages/numpy/core/shape_base.py" />
     <entry file="file://$USER_HOME$/.PyCharmCE2017.1/system/python_stubs/-2128377950/cv2/__init__.py" />
     <entry file="file://D:/ANACONDA/envs/tensorflow2/Lib/site-packages/numpy/lib/polynomial.py" />
-    <entry file="file://$PROJECT_DIR$/image_processing.py">
+    <entry file="file://$USER_HOME$/anaconda/envs/udacity/lib/python3.5/site-packages/numpy/lib/polynomial.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="1020">
-          <caret line="68" column="4" selection-start-line="68" selection-start-column="4" selection-end-line="68" selection-end-column="4" />
+        <state relative-caret-position="182">
+          <caret line="554" selection-start-line="554" selection-end-line="554" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/test_single_image.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="780">
+          <caret line="52" column="41" selection-start-line="52" selection-start-column="41" selection-end-line="52" selection-end-column="41" />
           <folding>
             <element signature="e#0#10#0" expanded="true" />
           </folding>
@@ -690,15 +708,25 @@
     </entry>
     <entry file="file://$PROJECT_DIR$/test_result.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="332">
+        <state relative-caret-position="390">
           <caret line="32" column="43" selection-start-line="32" selection-start-column="43" selection-end-line="32" selection-end-column="43" />
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/test_single_image.py">
+    <entry file="file://$PROJECT_DIR$/line.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="383">
-          <caret line="52" column="41" selection-start-line="52" selection-start-column="41" selection-end-line="52" selection-end-column="41" />
+        <state relative-caret-position="441">
+          <caret line="137" column="24" selection-start-line="137" selection-start-column="24" selection-end-line="137" selection-end-column="24" />
+          <folding>
+            <element signature="e#0#18#0" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/main.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="574">
+          <caret line="54" column="77" selection-start-line="54" selection-start-column="77" selection-end-line="54" selection-end-column="77" />
           <folding>
             <element signature="e#0#10#0" expanded="true" />
           </folding>
@@ -715,36 +743,19 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$USER_HOME$/anaconda/envs/udacity/lib/python3.5/site-packages/numpy/lib/polynomial.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="182">
-          <caret line="554" selection-start-line="554" selection-end-line="554" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/main.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="120">
-          <caret line="8" column="6" selection-start-line="8" selection-end-line="8" selection-end-column="6" />
-          <folding>
-            <element signature="e#0#10#0" expanded="true" />
-          </folding>
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$USER_HOME$/Library/Caches/PyCharmCE2018.1/python_stubs/907048125/cv2/__init__.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="185">
-          <caret line="8743" column="4" selection-start-line="8743" selection-start-column="4" selection-end-line="8743" selection-end-column="4" />
+        <state relative-caret-position="178">
+          <caret line="1374" selection-start-line="1374" selection-end-line="1374" />
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/line.py">
+    <entry file="file://$PROJECT_DIR$/image_processing.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="-877">
-          <caret line="123" column="85" selection-start-line="123" selection-start-column="85" selection-end-line="123" selection-end-column="85" />
+        <state relative-caret-position="248">
+          <caret line="112" column="36" selection-start-line="112" selection-start-column="36" selection-end-line="112" selection-end-column="36" />
           <folding>
-            <element signature="e#0#18#0" expanded="true" />
+            <element signature="e#0#10#0" expanded="true" />
           </folding>
         </state>
       </provider>

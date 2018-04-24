@@ -6,16 +6,20 @@ class Line():
     """
     img_size: width, height
     """
-    def __init__(self, img_size):
+    def __init__(self, img_size, scale):
         self.detected = False
         self.recent_xfit = []
         self.best_x = None
         self.best_fit = None
+        self.best_left_fit_x = None
+        self.best_right_fit_x = None
         self.current_fit = []
+        # radius of curvature in m for current x, y in m
         self.radius_of_curvature = []
-        self.line_base_pos = None
         self.diffs = None
         self.img_size = img_size
+        # fit line image for visualization
+        self.out_img = None
         # standard y coordinates
         self.ploty = np.linspace(0, img_size[1] - 1, img_size[1], dtype=np.int32)
         # most recent valid curvatures
@@ -25,9 +29,11 @@ class Line():
         self.left_y = None
         self.right_x = None
         self.right_y = None
+        self.left_fit_x = None
+        self.right_fit_x = None
         # scale pixel->meter
-        self.ym_per_pix = 30 / 720
-        self.xm_per_pix = 3.7 / 700
+        self.ym_per_pix = 30 / 720 / scale
+        self.xm_per_pix = 3.7 / 700 / scale
         # car position offset
         self.car_pos = 0
 
@@ -44,14 +50,18 @@ class Line():
             self.best_fit = self.current_fit
         else:
             self.detected = False
-
         # update cars position
-        self.update_car_position()
+        if self.best_fit is not None:
+            self.update_car_position()
+            self.best_left_fit_x = self.left_fit_x
+            self.best_right_fit_x = self.right_fit_x
+
+        return self.out_img, [self.best_left_fit_x, self.best_right_fit_x, self.ploty], self.cur_curvature, self.car_pos
 
     # Note: binary_warped will be only half on the image
     def blind_search(self, binary_warped):
         #### visualization ####
-        out_img = np.dstack((binary_warped, binary_warped, binary_warped))
+        self.out_img = np.dstack((binary_warped, binary_warped, binary_warped))
         #### visualization ####
 
         histogram = np.sum(binary_warped[binary_warped.shape[0] // 2:, :], axis=0)
@@ -85,8 +95,8 @@ class Line():
             win_x_right_high = right_x_current + margin
 
             #### visualization ####
-            cv2.rectangle(out_img, (win_x_left_low, win_y_low), (win_x_left_high, win_y_high), (0, 255, 0), 2)
-            cv2.rectangle(out_img, (win_x_right_low, win_y_low), (win_x_right_high, win_y_high), (0, 255, 0), 2)
+            cv2.rectangle(self.out_img, (win_x_left_low, win_y_low), (win_x_left_high, win_y_high), (0, 255, 0), 2)
+            cv2.rectangle(self.out_img, (win_x_right_low, win_y_low), (win_x_right_high, win_y_high), (0, 255, 0), 2)
             #### visualization ####
 
             good_left_inds = ((nonezero_y >= win_y_low) & (nonezero_y <= win_y_high) &
@@ -115,16 +125,16 @@ class Line():
         self.current_fit = [left_fit, right_fit]
 
         # fitting
-        left_fitx = (left_fit[0] * self.ploty ** 2 + left_fit[1] * self.ploty + left_fit[2]).astype(np.int32)
-        left_pts = np.vstack((left_fitx, self.ploty)).T.reshape(-1, 1, 2)
-        right_fitx = (right_fit[0] * self.ploty ** 2 + right_fit[1] * self.ploty + right_fit[2]).astype(np.int32)
-        right_pts = np.vstack((right_fitx, self.ploty)).T.reshape(-1, 1, 2)
+        self.left_fit_x = (left_fit[0] * self.ploty ** 2 + left_fit[1] * self.ploty + left_fit[2]).astype(np.int32)
+        left_pts = np.vstack((self.left_fit_x, self.ploty)).T.reshape(-1, 1, 2)
+        self.right_fit_x = (right_fit[0] * self.ploty ** 2 + right_fit[1] * self.ploty + right_fit[2]).astype(np.int32)
+        right_pts = np.vstack((self.right_fit_x, self.ploty)).T.reshape(-1, 1, 2)
 
-        out_img = cv2.polylines(out_img, [left_pts], False, (0, 0, 255), thickness=2)
-        out_img = cv2.polylines(out_img, [right_pts], False, (0, 0, 255), thickness=2)
+        self.out_img = cv2.polylines(self.out_img, [left_pts], False, (0, 0, 255), thickness=2)
+        self.out_img = cv2.polylines(self.out_img, [right_pts], False, (0, 0, 255), thickness=2)
 
         #### visualization ####
-        cv2.imshow('out', out_img)
+        # cv2.imshow('out', self.out_img)
         # cv2.waitKey(0)
         #### visualization ####
 
@@ -132,7 +142,7 @@ class Line():
 
     def track_lines(self, binary_warped):
         #### visualization ####
-        out_img = np.dstack((binary_warped, binary_warped, binary_warped))
+        self.out_img = np.dstack((binary_warped, binary_warped, binary_warped))
         #### visualization ####
 
         nonezero = binary_warped.nonzero()
@@ -158,16 +168,16 @@ class Line():
         self.current_fit = [left_fit, right_fit]
 
         # fitting
-        left_fitx = (left_fit[0] * self.ploty ** 2 + left_fit[1] * self.ploty + left_fit[2]).astype(np.int32)
-        left_pts = np.vstack((left_fitx, self.ploty)).T.reshape(-1, 1, 2)
-        right_fitx = (right_fit[0] * self.ploty ** 2 + right_fit[1] * self.ploty + right_fit[2]).astype(np.int32)
-        right_pts = np.vstack((right_fitx, self.ploty)).T.reshape(-1, 1, 2)
+        self.left_fit_x = (left_fit[0] * self.ploty ** 2 + left_fit[1] * self.ploty + left_fit[2]).astype(np.int32)
+        left_pts = np.vstack((self.left_fit_x, self.ploty)).T.reshape(-1, 1, 2)
+        self.right_fit_x = (right_fit[0] * self.ploty ** 2 + right_fit[1] * self.ploty + right_fit[2]).astype(np.int32)
+        right_pts = np.vstack((self.right_fit_x, self.ploty)).T.reshape(-1, 1, 2)
 
-        out_img = cv2.polylines(out_img, [left_pts], False, (0, 0, 255), thickness=2)
-        out_img = cv2.polylines(out_img, [right_pts], False, (0, 0, 255), thickness=2)
+        self.out_img = cv2.polylines(self.out_img, [left_pts], False, (0, 0, 255), thickness=2)
+        self.out_img = cv2.polylines(self.out_img, [right_pts], False, (0, 0, 255), thickness=2)
 
         #### visualization ####
-        cv2.imshow('out', out_img)
+        # cv2.imshow('out', self.out_img)
         # cv2.waitKey(0)
         #### visualization ####
 
@@ -199,8 +209,9 @@ class Line():
                          / np.absolute(2 * left_fit_cur[0])
         right_curvature = ((1 + (2 * right_fit_cur[0] * y_eval * self.ym_per_pix + right_fit_cur[1]) ** 2) ** 1.5) \
                           / np.absolute(2 * right_fit_cur[0])
+        self.radius_of_curvature = (left_curvature, right_curvature)
 
-        return left_curvature, right_curvature
+        return self.radius_of_curvature
 
     def get_line_distance(self):
         if self.best_fit is None:
