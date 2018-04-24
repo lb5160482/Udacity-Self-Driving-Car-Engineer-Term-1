@@ -110,10 +110,10 @@ def add_img_info(img, curvature, vehicle_position):
     right_lane_str_position = int(0.05 * img.shape[1]), int(0.15 * img.shape[0])
     if vehicle_position < 0 :
         car_pos_str = 'Vehicle is ' + str(
-            float("{0:.2f}".format(-vehicle_position))) + ' meter off on the left of lane center'
+            float("{0:.2f}".format(-vehicle_position))) + ' meter left of lane center'
     else:
         car_pos_str = 'Vehicle is ' + str(
-            float("{0:.2f}".format(vehicle_position))) + ' meter off on the right of lane center'
+            float("{0:.2f}".format(vehicle_position))) + ' meter right of lane center'
     car_pos_str_position = int(0.05 * img.shape[1]), int(0.2 * img.shape[0])
 
     cv2.putText(img, left_lane_str, left_lane_str_position, fontFace=cv2.FONT_HERSHEY_SIMPLEX, fontScale=1, thickness=2,
