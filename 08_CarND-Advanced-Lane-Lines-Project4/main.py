@@ -25,6 +25,7 @@ print(dist_paras)
 print()
 
 cap = cv2.VideoCapture('./project_video.mp4')
+video_writer = cv2.VideoWriter('output_video.avi', cv2.VideoWriter_fourcc('M', 'J', 'P', 'G'), 30, image_size)
 
 while cap.isOpened():
     ret, frame = cap.read()
@@ -42,6 +43,7 @@ while cap.isOpened():
     thresholded_img = np.zeros_like(undist[:, :, 0])
     thresholded_img[(v_channel_bin == 255) & ((sobel_x_bin == 255) | (s_channel_bin == 255))] = 255
 
+
     # get bird view warped img
     bird_view_img_binary, perspective_trans_inv = imgproc.perspective_transfrom(thresholded_img, perspective_src_points, perspective_dst_points)
 
@@ -53,6 +55,9 @@ while cap.isOpened():
 
     # add curvature and vehicle position on the image
     overlaid_img = imgproc.add_img_info(overlaid_img, cur_curvature, car_pos)
+
+    # write image to video
+    video_writer.write(overlaid_img)
 
     # visualization
     small_rgb = cv2.resize(undist, (0, 0), fx=visualization_scale, fy=visualization_scale)

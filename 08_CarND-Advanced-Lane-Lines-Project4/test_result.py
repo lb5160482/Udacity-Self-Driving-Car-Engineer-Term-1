@@ -69,9 +69,9 @@ perspective_dst_points = np.float32([[offset, image_size[1]], [offset, 0],
                                      [image_size[0] - offset, 0], [image_size[0] - offset, image_size[1]]])
 for test_img_path in test_image_paths:
     if platform.system() == 'Windows':
-        img_name = test_img_path[test_img_path.rfind('/') + 1:]
-    else:
         img_name = test_img_path[test_img_path.rfind('\\') + 1:]
+    else:
+        img_name = test_img_path[test_img_path.rfind('/') + 1:]
     test_img = cv2.imread(test_img_path)
     # distortion correction
     test_img = calibration.distort_correction(test_img)
@@ -79,15 +79,13 @@ for test_img_path in test_image_paths:
     # file_name = './output_images/undist_' + img_name;
     # cv2.imwrite(file_name, test_img)
 
-    cv2.line(test_img, (233, 694), (595, 450), color=(0, 0, 255))
-    cv2.line(test_img, (686, 450), (1073, 694), color=(0, 0, 255))
+    # cv2.line(test_img, (233, 694), (595, 450), color=(0, 0, 255))
+    # cv2.line(test_img, (686, 450), (1073, 694), color=(0, 0, 255))
     # file_name = './output_images/perepective_region.jpg'
     # cv2.imwrite(file_name, test_img)
-    bird_view_img_rgb = imgproc.perspective_transfrom(test_img, perspective_src_points, perspective_dst_points)
-    bird_view_img_binary = imgproc.perspective_transfrom(bin_img_dict[img_name], perspective_src_points,
+    bird_view_img_rgb, Minv = imgproc.perspective_transfrom(test_img, perspective_src_points, perspective_dst_points)
+    bird_view_img_binary, Minv = imgproc.perspective_transfrom(bin_img_dict[img_name], perspective_src_points,
                                                          perspective_dst_points)
-
-    # cv2.imshow(img_name, bird_view_img_rgb)
     # cv2.imshow(img_name, bird_view_img_binary)
     # cv2.waitKey(0)
     # cv2.destroyWindow(window_name)
