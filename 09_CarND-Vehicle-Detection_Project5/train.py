@@ -42,6 +42,7 @@ class Train():
 		self.spatial_feat = spatial_feat
 		self.hist_feat = hist_feat
 		self.hog_feat = hog_feat
+		self.X_scalar = None
 
 
 	def train(self):
@@ -62,9 +63,9 @@ class Train():
 		X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.2, random_state=rand_state)
 
 		# normalize data
-		X_scalar = StandardScaler().fit(X_train)
-		X_train = X_scalar.transform(X_train)
-		X_test = X_scalar.transform(X_test)
+		self.X_scalar = StandardScaler().fit(X_train)
+		X_train = self.X_scalar.transform(X_train)
+		X_test = self.X_scalar.transform(X_test)
 
 		print('Using:', self.orient, 'orientations', self.pix_per_cell,
 			  'pixels per cell and', self.cell_per_block, 'cells per block')
@@ -79,8 +80,18 @@ class Train():
 		t = time.time()
 
 
-	def get_model(self):
-		return self.svc
+	def get_model_dict(self):
+		dict = {}
+		dict['svc'] = self.svc
+		dict['scalar'] = self.X_scalar
+		dict['orient'] = self.orient
+		dict['pix_per_cel'] = self.pix_per_cell
+		dict['cell_per_block'] = self.cell_per_block
+		dict['spatial_size'] = self.spatial_size
+		dict['hist_bins'] = self.hist_bins
+		dict['color_space'] = self.color_space
+
+		return dict
 
 
 	def update_imgpaths_lists(self):
@@ -213,17 +224,19 @@ if __name__ == '__main__':
 		car_imgs_folder = './images_data/vehicles/'
 		noncar_imgs_folder = './images_data/non-vehicles/'
 
-	file_name = 'model'
-	if os.path.exists('model'):
+	file_name = 'model_dict'
+	if os.path.exists(file_name):
 		file_object = open(file_name, 'rb')
-		model = pickle.load(file_object)
+		model_dict = pickle.load(file_object)
 	else:
 		train = Train(car_imgs_folder, noncar_imgs_folder, color_space=COLOR_SPACE, spatial_size=SPATIAL_SIZE,
 					  hist_bins=HIST_BINS, orient=ORIENT, pix_per_cell=PIX_PER_CELL, cell_per_block=CELL_PER_BLOCK,
 					  hog_channel=HOG_CHANNEL, spatial_feat=SPATIAL_FEAT, hist_feat=HIST_FEAT, hog_feat=HOG_FEAT)
 		train.train()
-		model = train.get_model()
+		model_dict = train.get_model_dict()
 		# save model
 		file_object = open(file_name, 'wb')
-		pickle.dump(model, file_object)
+		pickle.dump(model_dict, file_object)
 		file_object.close()
+
+	print(model_dict)
