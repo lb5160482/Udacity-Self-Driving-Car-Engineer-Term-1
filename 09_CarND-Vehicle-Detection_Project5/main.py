@@ -4,7 +4,7 @@ import os
 import pickle
 
 
-cap = cv2.VideoCapture('./project_video_clip.mp4')
+cap = cv2.VideoCapture('./project_video.mp4')
 
 file_name = 'model_dict'
 if os.path.exists(file_name):
